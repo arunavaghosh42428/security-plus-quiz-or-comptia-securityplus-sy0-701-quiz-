@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CompTIA Security+ SY0-701 Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #0f1629;
+    --surface2: #141d35;
+    --border: #1e2d4f;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --correct: #00ff88;
+    --wrong: #ff4466;
+    --warn: #ffaa00;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(0,212,255,0.05) 0%, transparent 50%);
+  }
+
+  /* Grid overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app { position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  header {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,14,26,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--muted); }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .stat-pill {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .val {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── HOME ── */
+  #home {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 32px;
+  }
+
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 48px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* Mode cards */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(0,212,255,0.05));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .mode-card:hover::before { opacity: 1; }
+  .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--glow); }
+  .mode-card.selected { border-color: var(--accent); background: var(--surface2); }
+  .mode-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 12px; right: 12px;
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .mode-icon { font-size: 28px; margin-bottom: 12px; }
+  .mode-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .mode-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* Lesson selector */
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .lesson-btn {
+    aspect-ratio: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lesson-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lesson-btn.selected { border-color: var(--accent); background: rgba(0,212,255,0.1); color: var(--accent); }
+  .lesson-btn.all-btn {
+    grid-column: span 2;
+    aspect-ratio: auto;
+    padding: 10px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.4); }
+  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .q-counter {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .q-counter .current { color: var(--accent); font-size: 18px; }
+
+  .lesson-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    padding: 4px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .q-type-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .question-text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .answer-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .answer-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    line-height: 1.5;
+  }
+
+  .answer-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.05);
+    transform: translateX(4px);
+  }
+
+  .answer-btn .letter {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  .answer-btn.correct {
+    border-color: var(--correct);
+    background: rgba(0,255,136,0.08);
+    color: var(--correct);
+  }
+  .answer-btn.correct .letter { border-color: var(--correct); color: var(--correct); background: rgba(0,255,136,0.15); }
+
+  .answer-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,68,102,0.08);
+    color: var(--wrong);
+  }
+  .answer-btn.wrong .letter { border-color: var(--wrong); color: var(--wrong); background: rgba(255,68,102,0.15); }
+
+  .answer-btn.dimmed { opacity: 0.4; }
+  .answer-btn:disabled { cursor: default; }
+
+  /* Explanation */
+  .explanation {
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .explanation strong { color: var(--accent); }
+
+  /* Result feedback */
+  .result-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 4px 0 12px;
+    letter-spacing: 1px;
+  }
+
+  .result-toast.correct-toast { color: var(--correct); }
+  .result-toast.wrong-toast { color: var(--wrong); }
+
+  .next-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .next-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Timer bar */
+  .timer-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .timer-bar-fill {
+    height: 100%;
+    background: var(--warn);
+    border-radius: 100px;
+    transition: width 1s linear, background 0.5s;
+  }
+
+  /* ── RESULTS ── */
+  #results {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 32px;
+    text-align: center;
+  }
+
+  .score-display {
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .score-ring {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring circle { transition: stroke-dashoffset 1s ease; }
+
+  .score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 40px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .score-verdict {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .score-sub { color: var(--muted); font-size: 15px; margin-bottom: 40px; }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .result-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .result-stat .num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 28px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .result-stat .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .result-stat.good .num { color: var(--correct); }
+  .result-stat.bad .num { color: var(--wrong); }
+  .result-stat.neutral .num { color: var(--warn); }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Review list */
+  .review-list { text-align: left; margin-top: 40px; }
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 10px;
+  }
+  .review-item.ri-correct { border-left: 3px solid var(--correct); }
+  .review-item.ri-wrong { border-left: 3px solid var(--wrong); }
+  .review-q { font-size: 14px; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
+  .review-a { font-family: 'Share Tech Mono', monospace; font-size: 12px; }
+  .review-a.ra-correct { color: var(--correct); }
+  .review-a.ra-wrong { color: var(--wrong); }
+  .review-correct-ans { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--correct); margin-top: 4px; }
+
+  .loading {
+    text-align: center;
+    padding: 80px 32px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .loading .dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+  }
+  @keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+  }
+
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,170,0,0.15);
+    border: 1px solid rgba(255,170,0,0.3);
+    color: var(--warn);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-left: 12px;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 16px; }
+    #home, #quiz, #results { padding: 24px 16px; }
+    .question-card { padding: 24px 20px; }
+    .results-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .result-stat { padding: 14px 10px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">SEC<span>+</span> SY0-701 <span>// QUIZ</span></div>
+    <div class="header-stats">
+      <div class="stat-pill">SCORE <span class="val" id="hdr-score">0</span></div>
+      <div class="stat-pill">STREAK <span class="val" id="hdr-streak">0</span>🔥</div>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="hero-title">SECURITY+<br>DRILL</div>
+    <div class="hero-sub">// SY0-701 EXAM PREP — 16 LESSONS</div>
+
+    <div class="section-label">Select Mode</div>
+    <div class="mode-grid" id="mode-grid">
+      <div class="mode-card selected" data-mode="practice" onclick="selectMode(this)">
+        <div class="mode-icon">🎯</div>
+        <div class="mode-name">Practice</div>
+        <div class="mode-desc">Unlimited time, see explanations after each answer. Best for learning.</div>
+      </div>
+      <div class="mode-card" data-mode="timed" onclick="selectMode(this)">
+        <div class="mode-icon">⏱️</div>
+        <div class="mode-name">Timed</div>
+        <div class="mode-desc">30 seconds per question. Tests exam-speed recall under pressure.</div>
+      </div>
+      <div class="mode-card" data-mode="rapid" onclick="selectMode(this)">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-name">Rapid Fire</div>
+        <div class="mode-desc">No explanations, fast feedback. Pure drilling for memorization.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Select Lessons</div>
+    <div class="lesson-grid" id="lesson-grid">
+      <div class="lesson-btn all-btn selected" data-lesson="all" onclick="toggleLesson(this)">ALL</div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:8px;">
+      <button class="start-btn" id="start-btn" onclick="startQuiz()">
+        ▶ BEGIN QUIZ
+      </button>
+      <div style="font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--muted);" id="q-count-preview"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="screen">
+    <div class="quiz-meta">
+      <div class="q-counter"><span class="current" id="q-num">1</span> / <span id="q-total">?</span></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+      </div>
+      <div id="lesson-badge-wrap"></div>
+    </div>
+
+    <div class="timer-bar-wrap" id="timer-wrap" style="display:none">
+      <div class="timer-bar-fill" id="timer-bar"></div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="loading">LOADING QUESTIONS<span class="dots"></span></div>
+    </div>
+
+    <div id="quiz-actions" style="display:none">
+      <div id="result-feedback"></div>
+      <div id="explanation-box"></div>
+      <div style="margin-top:20px">
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+          NEXT <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="screen">
+    <div class="score-verdict" id="verdict">WELL DONE</div>
+    <div class="score-sub" id="verdict-sub">Here's how you performed</div>
+
+    <div class="score-display">
+      <div class="score-ring">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="75" fill="none" stroke="#1e2d4f" stroke-width="12"/>
+          <circle cx="90" cy="90" r="75" fill="none" stroke="url(#scoreGrad)" stroke-width="12"
+            stroke-linecap="round" stroke-dasharray="471" id="score-circle" stroke-dashoffset="471"/>
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-center">
+          <div class="score-pct" id="score-pct">0%</div>
+          <div class="score-label">SCORE</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid">
+      <div class="result-stat good">
+        <span class="num" id="res-correct">0</span>
+        <span class="lbl">CORRECT</span>
+      </div>
+      <div class="result-stat bad">
+        <span class="num" id="res-wrong">0</span>
+        <span class="lbl">WRONG</span>
+      </div>
+      <div class="result-stat neutral">
+        <span class="num" id="res-streak">0</span>
+        <span class="lbl">BEST STREAK</span>
+      </div>
+    </div>
+
+    <div class="results-actions">
+      <button class="start-btn" onclick="restartQuiz()" style="font-size:16px; padding:14px 28px;">↺ TRY AGAIN</button>
+      <button class="btn-outline" onclick="goHome()">CHANGE SETTINGS</button>
+      <button class="btn-outline" onclick="toggleReview()">REVIEW ANSWERS</button>
+    </div>
+
+    <div class="review-list" id="review-list" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+// ── ALL QUIZ QUESTIONS ──
+const ALL_QUESTIONS = [
+  // LESSON 1 — Security Concepts
+  { lesson: 1, q: "What does the CIA triad stand for in information security?", opts: ["Confidentiality, Integrity, Availability","Compliance, Identification, Authorization","Cryptography, Integrity, Authentication","Control, Inspection, Assessment"], ans: 0, exp: "The CIA triad is the foundation of information security: Confidentiality (only authorized access), Integrity (data isn't altered), and Availability (systems are accessible)." },
+  { lesson: 1, q: "Which CIA triad property ensures that information is accessible to those authorized to view or modify it?", opts: ["Confidentiality","Non-repudiation","Integrity","Availability"], ans: 3, exp: "Availability ensures systems and data are accessible when needed by authorized users. It is often overlooked but equally important as the other two properties." },
+  { lesson: 1, q: "What is the purpose of non-repudiation in information security?", opts: ["Ensuring data is encrypted at rest","Preventing persons from denying they created or modified data","Restricting access to authorized users only","Detecting unauthorized changes to data"], ans: 1, exp: "Non-repudiation ensures that parties cannot deny their actions — e.g., that they sent a message or created a file. It is often achieved via digital signatures." },
+  { lesson: 1, q: "In the IAM/AAA framework, what does IAM stand for?", opts: ["Internet Access Management","Identity and Access Management","Incident and Alert Management","Integrity and Authentication Model"], ans: 1, exp: "IAM stands for Identity and Access Management. It reflects the importance of both identifying a user and controlling their access to resources." },
+  { lesson: 1, q: "What is a gap analysis in security?", opts: ["A test of firewall rules","An assessment comparing current security posture to a desired framework","A scan for network vulnerabilities","A review of physical security controls"], ans: 1, exp: "Gap analysis compares the current state of security controls against a target framework or best-practice standard to identify areas needing improvement." },
+  { lesson: 1, q: "Which security control category relies on a person for implementation?", opts: ["Technical","Managerial","Physical","Operational"], ans: 3, exp: "Operational controls rely on people for implementation — such as security guards, user training, and manual review processes." },
+  { lesson: 1, q: "A door lock on a server room is an example of which security control category?", opts: ["Technical","Operational","Managerial","Physical"], ans: 3, exp: "Physical controls mediate access to premises and hardware — locks, barriers, cameras, and access cards are all physical security controls." },
+  { lesson: 1, q: "Which functional type of security control operates BEFORE an attack occurs?", opts: ["Corrective","Detective","Preventive","Compensating"], ans: 2, exp: "Preventive controls physically or logically restrict unauthorized access and operate before an attack takes place, such as firewalls and permissions." },
+  { lesson: 1, q: "A backup system used to restore data after a ransomware attack is an example of which control type?", opts: ["Preventive","Detective","Deterrent","Corrective"], ans: 3, exp: "Corrective controls respond to and fix incidents after they occur. Data backups and patch management are classic examples." },
+  { lesson: 1, q: "A warning sign that says 'This area is monitored by CCTV' is an example of what type of security control?", opts: ["Directive","Detective","Deterrent","Compensating"], ans: 2, exp: "Deterrent controls psychologically discourage intrusions — signs, visible cameras, and policy notices all serve this function without physically stopping an attacker." },
+
+  // LESSON 2 — Threat Types
+  { lesson: 2, q: "Which term describes the probability of a threat actor exploiting a vulnerability?", opts: ["Vulnerability","Threat","Risk","Control"], ans: 2, exp: "Risk combines the likelihood of a threat exploiting a vulnerability with the potential impact. Risk = Threat × Vulnerability × Impact." },
+  { lesson: 2, q: "An attacker who uses pre-built exploit tools without deep technical knowledge is called a:", opts: ["APT","Nation-state actor","Script kiddie","White hat"], ans: 2, exp: "Script kiddies (unskilled attackers) rely on commodity tools and pre-written exploits rather than developing their own. They have low capability." },
+  { lesson: 2, q: "Which threat actor type typically has the highest level of resources and capability?", opts: ["Hacktivists","Script kiddies","Organized crime","Nation-state actors"], ans: 3, exp: "Nation-state actors are attached to military or intelligence services, have significant funding, advanced persistent threat (APT) capabilities, and access to political assets." },
+  { lesson: 2, q: "An Advanced Persistent Threat (APT) is most closely associated with which actor type?", opts: ["Script kiddies","Hacktivists","Nation-state actors","Unintentional insiders"], ans: 2, exp: "APTs are sophisticated, long-term attacks typically conducted by or associated with nation-state actors for espionage or strategic advantage." },
+  { lesson: 2, q: "Shadow IT refers to:", opts: ["Malware that hides in system processes","Unauthorized use of technology not sanctioned by IT","Hacker tools that avoid detection","Encrypted communications channels"], ans: 1, exp: "Shadow IT is when employees use unauthorized hardware, software, or cloud services that IT hasn't approved — creating unintentional insider threat risk." },
+  { lesson: 2, q: "An employee who accidentally deletes a critical database is best described as:", opts: ["A malicious insider","A nation-state actor","An unintentional insider threat","A hacktivist"], ans: 2, exp: "Unintentional insider threats arise from lack of training, weak adherence to policies, or accidents — not malicious intent." },
+  { lesson: 2, q: "What is an attack surface?", opts: ["The physical area of a data center","All points where an attacker can discover or exploit vulnerabilities","The total number of security controls","A list of known vulnerabilities in software"], ans: 1, exp: "An attack surface includes all physical, network, application, and human points where an attacker could discover and exploit vulnerabilities." },
+  { lesson: 2, q: "Which of the following is an example of a network attack vector?", opts: ["Phishing email","Default credentials on a router","Unpatched OS","Social engineering phone call"], ans: 1, exp: "Default credentials on network devices are a common network attack vector. Attackers often try default usernames/passwords first when targeting routers and switches." },
+  { lesson: 2, q: "Hacktivists are primarily motivated by:", opts: ["Financial gain","Political or social ideology","Nation-state espionage","Accidental misconfiguration"], ans: 1, exp: "Hacktivists are driven by political or social causes, and may launch attacks to promote their ideology, disrupt opponents, or bring attention to an issue." },
+  { lesson: 2, q: "A false flag operation in cybersecurity refers to:", opts: ["Using a VPN to hide traffic","Disguising the origin of an attack to blame another party","A type of phishing attack","A compensating control"], ans: 1, exp: "False flag operations make an attack appear to originate from a different actor to provide deniability or frame another party — a technique associated with nation-state actors." },
+
+  // LESSON 3 — Cryptography
+  { lesson: 3, q: "Which encryption method uses the same key for both encryption and decryption?", opts: ["Asymmetric","Hashing","Symmetric","Public key"], ans: 2, exp: "Symmetric encryption uses a single shared secret key for both encrypting and decrypting data. It is fast but requires secure key distribution." },
+  { lesson: 3, q: "What is the primary disadvantage of symmetric encryption?", opts: ["It is too slow for practical use","The key must be securely distributed to both parties","It cannot provide confidentiality","It uses public/private key pairs"], ans: 1, exp: "The key distribution problem is symmetric encryption's main weakness. Both parties must securely exchange the same secret key before communicating." },
+  { lesson: 3, q: "In asymmetric encryption, what is encrypted with a recipient's public key?", opts: ["The recipient's private key","Data that only the recipient's private key can decrypt","The sender's identity certificate","A hash of the plaintext"], ans: 1, exp: "In asymmetric encryption, data encrypted with someone's public key can only be decrypted with their corresponding private key — ensuring only the intended recipient can read it." },
+  { lesson: 3, q: "AES-256 uses a key that is how many bits long?", opts: ["128","192","256","512"], ans: 2, exp: "AES-256 uses a 256-bit key. The larger the keyspace, the stronger the protection against brute force attacks. 256-bit is exponentially stronger than 128-bit." },
+  { lesson: 3, q: "What property of hashing ensures no two inputs produce the same output?", opts: ["One-way","Anti-collision","Key exchange","Non-repudiation"], ans: 1, exp: "Anti-collision means it's computationally infeasible for two different inputs to produce the same hash digest. This is critical for integrity checking." },
+  { lesson: 3, q: "Which hashing algorithm produces a 256-bit digest and is recommended for security?", opts: ["MD5","SHA-1","SHA-256","DES"], ans: 2, exp: "SHA-256 (part of the SHA-2 family) produces a 256-bit digest and is a currently recommended hashing algorithm. MD5 and SHA-1 are considered weak." },
+  { lesson: 3, q: "A digital signature provides which security properties?", opts: ["Confidentiality only","Integrity, authentication, and non-repudiation","Availability and encryption","Key distribution"], ans: 1, exp: "Digital signatures combine hashing with asymmetric cryptography to provide integrity (data wasn't changed), authentication (proves who signed), and non-repudiation (can't deny signing)." },
+  { lesson: 3, q: "What is a Certificate Authority (CA) in PKI?", opts: ["A server that encrypts all web traffic","A repository that issues digital certificates to verified subjects","A hardware token used for authentication","A key distribution server"], ans: 1, exp: "A CA is a trusted third party that verifies identities and issues digital certificates binding a public key to a verified subject (person or device)." },
+  { lesson: 3, q: "What standard defines the format for digital certificates in PKI?", opts: ["AES","X.509","SHA-256","TLS"], ans: 1, exp: "X.509 (PKIX) is the standard that defines the format of public key certificates used in PKI systems." },
+  { lesson: 3, q: "Elliptic Curve Cryptography (ECC) is recommended to use at least how many bits?", opts: ["128","256","512","2048"], ans: 1, exp: "ECC provides equivalent security to RSA with much smaller key sizes. A 256-bit ECC key offers similar strength to a 3072-bit RSA key." },
+
+  // LESSON 4 — IAM
+  { lesson: 4, q: "Which authentication factor is a fingerprint scan?", opts: ["Something you know","Something you have","Something you are","Somewhere you are"], ans: 2, exp: "Biometrics (fingerprint, facial recognition, retina scan) are 'something you are' factors — they rely on physical characteristics unique to the individual." },
+  { lesson: 4, q: "True Multifactor Authentication (MFA) requires factors from:", opts: ["Two different knowledge factors","At least two different factor categories","The same category used twice","A password and a username"], ans: 1, exp: "MFA requires at least two factors from DIFFERENT categories (know + have, or know + are). Using two passwords is two-step verification, not MFA." },
+  { lesson: 4, q: "A hardware OTP fob is an example of which authentication factor?", opts: ["Something you know","Something you have","Something you are","Somewhere you are"], ans: 1, exp: "Hardware tokens (OTP fobs, smart cards, FIDO keys) are 'something you have' — physical devices in the user's possession." },
+  { lesson: 4, q: "What is the False Acceptance Rate (FAR) in biometric systems?", opts: ["Rate at which valid users are rejected","Rate at which unauthorized users are accepted","Total error rate of the system","Enrollment failure rate"], ans: 1, exp: "FAR (Type II error) is the rate at which an unauthorized person is incorrectly accepted. A low FAR is critical for security-sensitive applications." },
+  { lesson: 4, q: "FIDO U2F is most closely associated with which authentication method?", opts: ["SMS-based OTP","Hardware security keys","Password managers","Biometric enrollment"], ans: 1, exp: "FIDO U2F (Universal 2nd Factor) uses hardware security keys (like YubiKey) as a second factor, providing strong phishing-resistant authentication." },
+  { lesson: 4, q: "Passwordless authentication relies on which mechanism instead of a password?", opts: ["A PIN sent via SMS","A public/private key pair on an authenticator","A security question","A backup email code"], ans: 1, exp: "Passwordless authentication uses a public/private key pair. The private key stays on the authenticator device; the user proves presence via biometric or PIN." },
+  { lesson: 4, q: "What is attestation in the context of passwordless authentication?", opts: ["Verifying the user's identity","Verifying that the authenticator device has a secure root of trust","Encrypting the private key","Registering a new biometric"], ans: 1, exp: "Attestation verifies that the authenticator device itself is legitimate and has a secure root of trust — separate from authenticating the user." },
+  { lesson: 4, q: "Which of these is considered a soft authentication token?", opts: ["Smart card","Hardware OTP fob","SMS verification code","FIDO security key"], ans: 2, exp: "Soft tokens transmit codes via out-of-band channels like SMS, email, or push notifications — as opposed to hard tokens which are dedicated physical devices." },
+  { lesson: 4, q: "According to updated NIST guidance, which password policy is now considered less effective?", opts: ["Using long passphrases","Requiring periodic forced password changes","Using a password manager","Checking against known breached passwords"], ans: 1, exp: "NIST updated guidance recommends against mandatory periodic password changes (aging), as they often lead to weaker passwords. Focus instead on length and checking against breach databases." },
+  { lesson: 4, q: "Geolocation used to verify a user is in an expected country is which authentication factor?", opts: ["Something you know","Something you have","Something you are","Somewhere you are"], ans: 3, exp: "Location-based authentication ('somewhere you are') uses IP address, GPS, or network location to verify the user is logging in from an expected place." },
+
+  // LESSON 5 — Network Architecture
+  { lesson: 5, q: "What is the purpose of a VLAN?", opts: ["Encrypts network traffic between subnets","Maps layer 2 switch topology to layer 3 IP subnets for logical segmentation","Creates a VPN tunnel to remote sites","Provides wireless authentication"], ans: 1, exp: "VLANs create logical network segments independent of physical port location, allowing you to segment broadcast domains and enforce access control between groups." },
+  { lesson: 5, q: "In network security design, a DMZ (Demilitarized Zone) is best described as:", opts: ["A physical room for servers","A security zone between public internet and private internal network","A type of firewall rule","A wireless isolation network"], ans: 1, exp: "A DMZ is a perimeter network segment that hosts internet-facing services (web servers, email) while isolating them from the trusted internal network." },
+  { lesson: 5, q: "Network segmentation primarily reduces risk by:", opts: ["Encrypting all data in transit","Limiting lateral movement if one segment is compromised","Automatically patching vulnerable hosts","Detecting intrusions in real time"], ans: 1, exp: "Segmentation contains breaches — if an attacker compromises one segment, they can't easily move to others. It enforces a least-privilege approach to network access." },
+  { lesson: 5, q: "Which layer of the OSI model do routers primarily operate at?", opts: ["Layer 1 (Physical)","Layer 2 (Data Link)","Layer 3 (Network)","Layer 7 (Application)"], ans: 2, exp: "Routers operate at Layer 3 (Network), forwarding packets based on IP addresses. Layer 2 switches forward frames based on MAC addresses." },
+  { lesson: 5, q: "A VPN tunnel primarily provides which security benefit for remote access?", opts: ["Blocks all incoming connections","Creates an encrypted channel over an untrusted network","Prevents DNS spoofing","Eliminates the need for authentication"], ans: 1, exp: "VPNs create encrypted tunnels over public networks (like the internet), ensuring confidentiality and integrity of remote access traffic." },
+
+  // LESSON 6 — Cloud Security
+  { lesson: 6, q: "In a cloud responsibility matrix, who is responsible for physical security of data center infrastructure?", opts: ["The cloud customer","Shared equally","The cloud service provider","A third-party auditor"], ans: 2, exp: "In all cloud models (IaaS, PaaS, SaaS), the cloud provider is always responsible for physical infrastructure security. The customer's responsibility increases in IaaS." },
+  { lesson: 6, q: "Which cloud service model gives customers the MOST control over the operating system?", opts: ["SaaS","PaaS","IaaS","FaaS"], ans: 2, exp: "In IaaS (Infrastructure as a Service), customers manage the OS, applications, and data. The provider manages hardware, networking, and virtualization." },
+  { lesson: 6, q: "A company hosts its cloud resources exclusively on dedicated hardware not shared with other tenants. This is:", opts: ["Public cloud","Community cloud","Private cloud","Hybrid cloud"], ans: 2, exp: "A private cloud provides single-tenant architecture, either on-premises or hosted by a provider, with no shared infrastructure with other organizations." },
+  { lesson: 6, q: "Which cloud deployment model is most common in enterprise environments?", opts: ["Public cloud only","Private cloud only","Community cloud","Hybrid cloud"], ans: 3, exp: "Hybrid cloud combines public and private cloud resources, allowing organizations to keep sensitive data private while using public cloud for scalability." },
+  { lesson: 6, q: "Serverless architecture in cloud computing means:", opts: ["No servers are used at all","Developers deploy code without managing server infrastructure","All processing happens client-side","A backup server is not required"], ans: 1, exp: "Serverless means the cloud provider manages all server infrastructure. Developers focus on code/functions; the provider handles scaling, patching, and availability." },
+
+  // LESSON 7 — Resilience & Site Security
+  { lesson: 7, q: "A Configuration Management Database (CMDB) is used for:", opts: ["Storing encryption keys","Tracking and managing IT assets and their configurations","Monitoring network traffic","Storing backup data"], ans: 1, exp: "A CMDB tracks IT assets, their configurations, and relationships. It is essential for change management, incident response, and understanding the impact of changes." },
+  { lesson: 7, q: "What is the 3-2-1 backup rule?", opts: ["3 backups in 2 locations with 1 offsite copy","3 encrypted backups on 2 tapes with 1 daily rotation","3 full backups, 2 incrementals, 1 differential","3 retention years, 2 DR sites, 1 hot standby"], ans: 0, exp: "The 3-2-1 rule: keep 3 copies of data, on 2 different media types, with 1 copy stored offsite. This protects against local disasters, media failure, and ransomware." },
+  { lesson: 7, q: "An air-gapped backup is one that:", opts: ["Is encrypted with AES-256","Is physically disconnected from the network","Is stored in a cloud-only environment","Replicates in real time to a secondary site"], ans: 1, exp: "Air-gapped backups are physically isolated from networks, preventing ransomware from encrypting them. They are a key defense against ransomware attacks targeting backup infrastructure." },
+  { lesson: 7, q: "What is a VM snapshot?", opts: ["A full backup of a virtual machine's disk","A point-in-time capture of a VM's state that can be rolled back to","An encrypted copy of VM data","A live migration of a VM to another host"], ans: 1, exp: "Snapshots capture a VM's state at a point in time for quick rollback. However, they are NOT backups — a corrupted filesystem can make snapshots useless." },
+  { lesson: 7, q: "Data sanitization before hardware disposal typically involves:", opts: ["Deleting files in the OS","Formatting the drive","Overwriting, degaussing, or physically destroying media","Simply removing the drive"], ans: 2, exp: "Sanitization must prevent data recovery. Methods include overwriting (multiple passes), degaussing (magnetic erasure), or physical destruction — depending on data sensitivity." },
+
+  // LESSON 8 — Vulnerability Management
+  { lesson: 8, q: "A zero-day vulnerability is best described as:", opts: ["A vulnerability patched within 24 hours","A flaw with no available fix that attackers may already be exploiting","A vulnerability affecting only zero-day old systems","A flaw discovered in legacy software"], ans: 1, exp: "Zero-day vulnerabilities are previously unknown flaws where developers have 'zero days' to fix before potential exploitation. Traditional security controls are often ineffective." },
+  { lesson: 8, q: "End-of-Life (EOL) software creates vulnerability risk because:", opts: ["It runs too slowly to be useful","Vendors no longer release security patches for it","It uses too much memory","It cannot support modern encryption"], ans: 1, exp: "EOL software no longer receives security patches. Any new vulnerabilities discovered remain unpatched, leaving systems permanently exposed." },
+  { lesson: 8, q: "Rooting an Android device primarily means:", opts: ["Factory resetting the device","Gaining administrative/root privileges on the device","Installing apps from outside the Play Store","Encrypting the device storage"], ans: 1, exp: "Rooting grants administrative (root) access to Android devices, bypassing security restrictions. It increases attack surface and defeats many security controls." },
+  { lesson: 8, q: "Which vulnerability type arises from default settings left unchanged?", opts: ["Zero-day","Misconfiguration","Cryptographic weakness","Firmware flaw"], ans: 1, exp: "Misconfiguration is one of the most common vulnerability sources — default credentials, open ports, and unreviewed cloud permissions are frequent culprits." },
+  { lesson: 8, q: "WannaCry ransomware (2017) exploited which type of vulnerability?", opts: ["A zero-day in Adobe Reader","A misconfigured firewall","MS17-010, an SMB vulnerability in Windows","A weak TLS implementation"], ans: 2, exp: "WannaCry used the EternalBlue exploit targeting MS17-010, a critical SMB vulnerability in Windows. It spread globally and highlighted the importance of timely patching." },
+
+  // LESSON 9 — Network Security
+  { lesson: 9, q: "CIS Benchmarks and STIGs are examples of:", opts: ["Vulnerability scanning tools","Secure configuration baselines for systems","Incident response frameworks","Penetration testing methodologies"], ans: 1, exp: "CIS Benchmarks and STIGs (Security Technical Implementation Guides) provide detailed secure configuration standards for OS, applications, and network devices." },
+  { lesson: 9, q: "WPA3-SAE improves over WPA2 by:", opts: ["Removing the need for a password","Using Simultaneous Authentication of Equals to resist offline dictionary attacks","Requiring a hardware token for Wi-Fi access","Disabling the SSID broadcast"], ans: 1, exp: "WPA3's SAE (Simultaneous Authentication of Equals) replaces WPA2's PSK handshake, making offline dictionary attacks against captured handshakes much harder." },
+  { lesson: 9, q: "SNMPv1 and v2 are considered insecure primarily because:", opts: ["They don't support enough OIDs","They use cleartext community strings for authentication","They can't monitor network devices","They are too slow for enterprise use"], ans: 1, exp: "SNMP v1/v2 use cleartext community strings (often 'public'/'private') for authentication. SNMPv3 adds encryption and proper authentication." },
+  { lesson: 9, q: "Port security on a network switch is used to:", opts: ["Encrypt traffic on specific ports","Restrict which MAC addresses can connect to a port","Block VLAN traffic","Monitor bandwidth usage"], ans: 1, exp: "Port security limits which MAC addresses can connect to a switch port, preventing unauthorized devices from being plugged in." },
+  { lesson: 9, q: "Which wireless security concern does a site survey and heat map address?", opts: ["Detecting rogue access points","Identifying signal coverage areas and potential leakage outside the building","Finding wireless malware","Testing WPA3 authentication"], ans: 1, exp: "Site surveys and heat maps show where wireless signal is strong or weak, including whether signal extends outside intended coverage areas (a security concern)." },
+
+  // LESSON 10 — Endpoint Security
+  { lesson: 10, q: "Endpoint Detection and Response (EDR) differs from traditional antivirus by:", opts: ["Only scanning for known virus signatures","Providing continuous monitoring, behavioral analysis, and incident response capabilities","Focusing solely on network traffic","Requiring manual scans to detect threats"], ans: 1, exp: "EDR continuously monitors endpoints for suspicious behavior, not just known signatures. It provides detection, investigation, and response capabilities beyond traditional AV." },
+  { lesson: 10, q: "Full Disk Encryption (FDE) protects data primarily when:", opts: ["The system is actively being used","A device is lost or stolen while powered off","Malware is actively running","Network traffic is intercepted"], ans: 1, exp: "FDE protects data at rest. If a device is lost or stolen while powered off, the encrypted disk is unreadable without the correct key, preventing data theft." },
+  { lesson: 10, q: "The principle of least privilege means:", opts: ["Users should have no access to any systems","Users receive only the minimum access needed to perform their job","All users share a common account","Administrators never access user files"], ans: 1, exp: "Least privilege limits each account or process to only the permissions necessary for their role, reducing the blast radius if credentials are compromised." },
+  { lesson: 10, q: "Application allowlisting differs from blocklisting in that:", opts: ["Allowlisting blocks known bad apps; blocklisting allows known good apps","Allowlisting only permits approved apps to run; blocklisting blocks known malicious ones","They are the same concept with different names","Allowlisting only works on mobile devices"], ans: 1, exp: "Allowlisting (whitelist) only permits pre-approved applications to execute — nothing runs unless explicitly allowed. Blocklisting (blacklist) blocks known bad apps but allows everything else." },
+  { lesson: 10, q: "SELinux and Group Policy are used for which endpoint security purpose?", opts: ["Encrypting disk contents","Enforcing configuration and access control policy","Scanning for malware signatures","Managing patch deployments"], ans: 1, exp: "SELinux (Linux) and Group Policy (Windows) enforce configuration baselines and access controls, ensuring endpoints maintain a compliant and secure state." },
+
+  // LESSON 11 — Application Security
+  { lesson: 11, q: "Which TLS versions are currently considered secure?", opts: ["SSL 3.0 and TLS 1.0","TLS 1.0 and TLS 1.1","TLS 1.2 and TLS 1.3","TLS 1.1 and TLS 1.2"], ans: 2, exp: "Only TLS 1.2 and TLS 1.3 should be used. Earlier versions (SSL 3.0, TLS 1.0, TLS 1.1) have known vulnerabilities and must be disabled." },
+  { lesson: 11, q: "A downgrade attack on TLS attempts to:", opts: ["Increase the encryption strength","Force both parties to use an older, weaker version of the protocol","Intercept certificates from the CA","Replay previously captured sessions"], ans: 1, exp: "Downgrade attacks trick clients and servers into using older, weaker protocol versions (like TLS 1.0) that have known vulnerabilities the attacker can then exploit." },
+  { lesson: 11, q: "LDAP default communication is a security concern because:", opts: ["It uses too much bandwidth","It transmits directory data in cleartext by default","It doesn't support Active Directory","It lacks support for user authentication"], ans: 1, exp: "LDAP uses cleartext communication by default. LDAPS or STARTTLS should be used to encrypt directory service queries and authentication." },
+  { lesson: 11, q: "FTP is considered insecure and should be replaced with:", opts: ["HTTP","SFTP or FTPS","SMBv1","Telnet"], ans: 1, exp: "FTP transmits data and credentials in cleartext. SFTP (SSH File Transfer Protocol) and FTPS (FTP over TLS) provide encrypted alternatives." },
+  { lesson: 11, q: "A cipher suite in TLS describes:", opts: ["The certificate authority hierarchy","The combination of algorithms used for key exchange, encryption, and hashing","The maximum key size supported","The session timeout duration"], ans: 1, exp: "A TLS cipher suite specifies which algorithms are used for each part of the TLS handshake: key exchange, bulk encryption, and message authentication." },
+
+  // LESSON 12 — Incident Response
+  { lesson: 12, q: "What is the first step in the incident response lifecycle?", opts: ["Containment","Eradication","Detection","Preparation"], ans: 3, exp: "Preparation comes first — establishing the CIRT team, communication plans, tools, and incident response plan (IRP) before incidents occur." },
+  { lesson: 12, q: "During incident response, 'containment' means:", opts: ["Removing malware from all affected systems","Isolating affected systems to prevent further spread","Documenting lessons learned","Notifying law enforcement"], ans: 1, exp: "Containment stops the bleeding — isolating affected systems, blocking network segments, or disabling accounts to prevent the incident from spreading further." },
+  { lesson: 12, q: "What is the purpose of a playbook in incident response?", opts: ["A log of all security alerts","Step-by-step procedures for handling specific types of incidents","A list of all assets in the organization","An executive summary of the security program"], ans: 1, exp: "Playbooks are pre-defined, step-by-step guides for handling specific incident types (ransomware, phishing, DDoS), ensuring consistent and efficient response." },
+  { lesson: 12, q: "The chain of custody in digital forensics is important because:", opts: ["It speeds up the investigation","It ensures evidence is admissible in court by documenting who handled it","It encrypts forensic images","It backs up evidence automatically"], ans: 1, exp: "Chain of custody documents everyone who has accessed evidence, when, and why. This ensures evidence integrity and legal admissibility if the case goes to court." },
+  { lesson: 12, q: "Out-of-band communications during an incident are used to:", opts: ["Encrypt forensic data","Communicate without alerting the attacker who may be monitoring normal channels","Speed up log analysis","Back up incident reports"], ans: 1, exp: "Out-of-band communications (phone calls, separate email systems) prevent attackers who have compromised normal systems from monitoring incident response activities." },
+
+  // LESSON 13 — Malware & Attack Indicators
+  { lesson: 13, q: "A Trojan horse malware is characterized by:", opts: ["Self-replicating by modifying other programs","Hiding malicious code within a seemingly legitimate program","Spreading across network shares","Encrypting files for ransom"], ans: 1, exp: "A Trojan conceals malicious functionality within a benign-looking application. Unlike viruses, Trojans don't self-replicate — users must execute them." },
+  { lesson: 13, q: "Ransomware is best classified by its:", opts: ["Infection vector (how it spreads)","Payload (it encrypts files and demands payment)","Origin (always nation-state)","Type (always a worm)"], ans: 1, exp: "Ransomware is classified by its payload — it encrypts victim files and demands payment for the decryption key. It can spread via various vectors." },
+  { lesson: 13, q: "Fileless malware is difficult to detect because:", opts: ["It uses very strong encryption","It runs in memory and may not write executable files to disk","It disguises itself as system processes","It only activates on specific dates"], ans: 1, exp: "Fileless malware exploits legitimate tools and runs in memory, leaving few disk artifacts for traditional AV to detect. It often uses PowerShell or WMI." },
+  { lesson: 13, q: "A keylogger's primary function is to:", opts: ["Encrypt files on the victim's system","Record all keystrokes to capture passwords and sensitive data","Spread to other computers via USB","Display ads in the browser"], ans: 1, exp: "Keyloggers record every keystroke made on a system, capturing passwords, credit card numbers, and other sensitive information. They can be software or hardware." },
+  { lesson: 13, q: "Which type of malware is specifically designed to provide remote control access to an attacker?", opts: ["Adware","Spyware","RAT (Remote Access Trojan)","Ransomware"], ans: 2, exp: "A RAT (Remote Access Trojan) gives attackers remote control over a compromised system, often used to install additional malware, exfiltrate data, or use the system as a pivot point." },
+
+  // LESSON 14 — Security Governance
+  { lesson: 14, q: "An Acceptable Use Policy (AUP) defines:", opts: ["Technical controls for network security","Rules governing appropriate use of organizational IT resources","Incident response procedures","Password complexity requirements"], ans: 1, exp: "An AUP defines what employees may and may not do with organizational IT systems, networks, and data — it's a foundational governance document." },
+  { lesson: 14, q: "Which document provides mandatory, specific requirements that must be met?", opts: ["Guideline","Standard","Best practice","Suggestion"], ans: 1, exp: "Standards define specific, mandatory requirements (often tied to regulations). Guidelines are recommendations that provide flexibility. Policies state rules; standards define how to meet them." },
+  { lesson: 14, q: "GDPR primarily protects:", opts: ["Corporate intellectual property","Personal data of EU residents","Trade secrets and patents","Financial transaction records"], ans: 1, exp: "GDPR (General Data Protection Regulation) protects the personal data and privacy rights of EU residents, applying to any organization processing their data regardless of location." },
+  { lesson: 14, q: "PCI-DSS is a regulation that applies to organizations that:", opts: ["Process government classified data","Store or process payment card data","Operate critical infrastructure","Employ EU citizens"], ans: 1, exp: "PCI-DSS (Payment Card Industry Data Security Standard) applies to any organization that stores, processes, or transmits payment card (credit/debit) data." },
+  { lesson: 14, q: "A procedure differs from a policy in that a procedure:", opts: ["Is legally binding","Provides step-by-step instructions for completing a specific task","Sets the strategic direction for security","Defines acceptable risk levels"], ans: 1, exp: "Procedures are tactical — they provide specific, step-by-step instructions for completing tasks in a compliant and repeatable way. Policies set the 'what'; procedures define the 'how'." },
+
+  // LESSON 15 — Risk Management
+  { lesson: 15, q: "Quantitative risk analysis assigns:", opts: ["Color-coded risk levels","Tangible monetary values to risks","Priority rankings without dollar amounts","Subjective risk ratings"], ans: 1, exp: "Quantitative analysis assigns dollar values to assets, threats, and impacts (e.g., Single Loss Expectancy × Annual Rate of Occurrence = Annual Loss Expectancy)." },
+  { lesson: 15, q: "Risk transference means:", opts: ["Accepting the risk as-is","Eliminating the vulnerability","Shifting financial risk to a third party (e.g., insurance)","Reducing the likelihood of the risk"], ans: 2, exp: "Risk transference shifts the financial consequences of a risk to a third party, typically through insurance or contract clauses, without eliminating the risk itself." },
+  { lesson: 15, q: "Residual risk is:", opts: ["The risk before any mitigations are applied","The risk that remains after implementing controls","The risk transferred to a third party","Risk that has been fully eliminated"], ans: 1, exp: "Residual risk is what's left after you've implemented controls. Risk can be reduced but never fully eliminated — organizations must accept some level of residual risk." },
+  { lesson: 15, q: "A risk register is used to:", opts: ["Store encryption keys","Document identified risks, their severity, owners, and mitigations","Log all security events","Track vulnerability scan results"], ans: 1, exp: "A risk register is a living document tracking all identified risks with their description, likelihood, impact, owner, and mitigation status. It's central to risk management." },
+  { lesson: 15, q: "Inherent risk refers to:", opts: ["Risk after controls are applied","The total cost of a security breach","The level of risk before any mitigations are attempted","Risk that cannot be mitigated"], ans: 2, exp: "Inherent risk is the raw, unmitigated risk level — what the risk would be if no controls were in place. It sets the baseline before security measures are applied." },
+
+  // LESSON 16 — Data Protection
+  { lesson: 16, q: "Data sovereignty means:", opts: ["Organizations own all data they collect","Data is subject to the laws of the jurisdiction where it physically resides","All data must be encrypted at rest","Employees own their personal work data"], ans: 1, exp: "Data sovereignty means that data is subject to the laws of the country where it is physically stored or processed — a critical consideration for cloud deployments." },
+  { lesson: 16, q: "The 'Right to Be Forgotten' under GDPR allows individuals to:", opts: ["Access all data held about them","Request deletion of their personal data under certain circumstances","Prevent organizations from collecting their data","Transfer their data to another provider"], ans: 1, exp: "The Right to Be Forgotten (erasure) lets individuals request deletion of their personal data when it's no longer needed for the original purpose or when they withdraw consent." },
+  { lesson: 16, q: "In GDPR, a Data Controller is:", opts: ["The IT admin managing the database","The entity that determines the purposes and means of processing personal data","The cloud provider storing the data","A regulatory body overseeing compliance"], ans: 1, exp: "The Data Controller decides WHY and HOW personal data is processed. The Data Processor acts on the Controller's behalf. Both have GDPR compliance obligations." },
+  { lesson: 16, q: "Which data classification level requires the most stringent protection controls?", opts: ["Public","Internal","Confidential","Top Secret / Restricted"], ans: 3, exp: "Data classification tiers go from least to most sensitive. The highest tier (often called Restricted, Top Secret, or similar) requires the strongest controls, limited access, and encryption." },
+  { lesson: 16, q: "A data breach notification requirement means:", opts: ["Organizations must notify the media immediately","Affected individuals and regulators must be notified within specified timeframes","Only employees need to be told","Notification is optional if data was encrypted"], ans: 1, exp: "Most privacy laws (GDPR, state breach laws) require organizations to notify affected individuals and relevant regulators within specified timeframes after discovering a breach." },
+];
+
+// ── APP STATE ──
+let mode = 'practice';
+let selectedLessons = new Set(['all']);
+let questions = [];
+let current = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let answered = false;
+let timer = null;
+let timeLeft = 30;
+let sessionAnswers = [];
+
+// Build lesson buttons
+function buildLessonGrid() {
+  const grid = document.getElementById('lesson-grid');
+  // Safely grab or recreate the "All" button
+  let existing = grid.querySelector('.all-btn');
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.className = 'lesson-btn all-btn selected';
+    existing.dataset.lesson = 'all';
+    existing.textContent = 'ALL';
+    existing.onclick = () => toggleLesson(existing);
+  }
+  grid.innerHTML = '';
+  grid.appendChild(existing);
+  
+  const lessons = [...new Set(ALL_QUESTIONS.map(q => q.lesson))].sort((a,b) => a-b);
+  const lessonNames = {
+    1:'Security Concepts', 2:'Threat Types', 3:'Cryptography', 4:'IAM',
+    5:'Network Arch', 6:'Cloud Security', 7:'Resilience', 8:'Vuln Mgmt',
+    9:'Net Security', 10:'Endpoint Sec', 11:'App Security', 12:'Incident Response',
+    13:'Malware', 14:'Governance', 15:'Risk Mgmt', 16:'Data Protection'
+  };
+  
+  lessons.forEach(l => {
+    const btn = document.createElement('div');
+    btn.className = 'lesson-btn';
+    btn.dataset.lesson = l;
+    btn.title = `Lesson ${l}: ${lessonNames[l] || ''}`;
+    btn.textContent = String(l).padStart(2, '0');
+    btn.onclick = () => toggleLesson(btn);
+    grid.appendChild(btn);
+  });
+  updatePreview();
+}
+
+function toggleLesson(btn) {
+  const lesson = btn.dataset.lesson;
+  if (lesson === 'all') {
+    selectedLessons.clear();
+    selectedLessons.add('all');
+    document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    document.querySelector('[data-lesson="all"]').classList.remove('selected');
+    selectedLessons.delete('all');
+    if (selectedLessons.has(lesson)) {
+      selectedLessons.delete(lesson);
+      btn.classList.remove('selected');
+    } else {
+      selectedLessons.add(lesson);
+      btn.classList.add('selected');
+    }
+    if (selectedLessons.size === 0) {
+      selectedLessons.add('all');
+      document.querySelector('[data-lesson="all"]').classList.add('selected');
+    }
+  }
+  updatePreview();
+}
+
+function selectMode(card) {
+  mode = card.dataset.mode;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+
+function updatePreview() {
+  const count = getFilteredQuestions().length;
+  document.getElementById('q-count-preview').textContent = `${count} questions available`;
+  document.getElementById('start-btn').disabled = count === 0;
+}
+
+function getFilteredQuestions() {
+  if (selectedLessons.has('all')) return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q => selectedLessons.has(String(q.lesson)));
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  const pool = shuffle(getFilteredQuestions());
+  questions = pool.map(q => {
+    // Shuffle answers
+    const indices = [0,1,2,3];
+    const shuffled = shuffle(indices);
+    const newOpts = shuffled.map(i => q.opts[i]);
+    const newAns = shuffled.indexOf(q.ans);
+    return { ...q, opts: newOpts, ans: newAns };
+  });
+  
+  current = 0; score = 0; streak = 0; bestStreak = 0;
+  sessionAnswers = [];
+  document.getElementById('hdr-score').textContent = '0';
+  document.getElementById('hdr-streak').textContent = '0';
+  
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  if (current >= questions.length) { showResults(); return; }
+  
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+  
+  document.getElementById('q-num').textContent = current + 1;
+  document.getElementById('q-total').textContent = total;
+  document.getElementById('progress-bar').style.width = `${(current / total) * 100}%`;
+  document.getElementById('lesson-badge-wrap').innerHTML = 
+    `<div class="lesson-badge">LESSON ${q.lesson}</div>`;
+  
+  document.getElementById('quiz-actions').style.display = 'none';
+  document.getElementById('result-feedback').innerHTML = '';
+  document.getElementById('explanation-box').innerHTML = '';
+  
+  const letters = ['A','B','C','D'];
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <div class="q-type-label">// MULTIPLE CHOICE — LESSON ${q.lesson}</div>
+    <div class="question-text">${q.q}</div>
+    <div class="answer-grid" id="answer-grid" style="margin-top:20px">
+      ${q.opts.map((opt, i) => `
+        <button class="answer-btn" onclick="selectAnswer(${i})" id="ans-${i}">
+          <span class="letter">${letters[i]}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+  
+  // Timer
+  if (mode === 'timed') {
+    document.getElementById('timer-wrap').style.display = 'block';
+    startTimer();
+  } else {
+    document.getElementById('timer-wrap').style.display = 'none';
+    clearInterval(timer);
+  }
+}
+
+function startTimer() {
+  clearInterval(timer);
+  timeLeft = 30;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = '100%';
+  bar.style.background = 'var(--warn)';
+  
+  timer = setInterval(() => {
+    timeLeft--;
+    const pct = (timeLeft / 30) * 100;
+    bar.style.width = pct + '%';
+    if (timeLeft <= 10) bar.style.background = 'var(--wrong)';
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      if (!answered) timeUp();
+    }
+  }, 1000);
+}
+
+function timeUp() {
+  answered = true;
+  const q = questions[current];
+  const letters = ['A','B','C','D'];
+  
+  document.querySelectorAll('.answer-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else btn.classList.add('dimmed');
+  });
+  
+  streak = 0;
+  document.getElementById('hdr-streak').textContent = '0';
+  sessionAnswers.push({ q: q.q, selected: -1, correct: q.ans, opts: q.opts, wasCorrect: false });
+  
+  const feedback = document.getElementById('result-feedback');
+  feedback.innerHTML = `<div class="result-toast wrong-toast">⏰ TIME'S UP — correct was ${letters[q.ans]}</div>`;
+  
+  if (mode !== 'rapid') {
+    document.getElementById('explanation-box').innerHTML = 
+      `<div class="explanation"><strong>📖 Explanation:</strong> ${q.exp}</div>`;
+  }
+  
+  document.getElementById('quiz-actions').style.display = 'block';
+  document.getElementById('next-btn').textContent = current < questions.length - 1 ? 'NEXT →' : 'SEE RESULTS →';
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  clearInterval(timer);
+  answered = true;
+  
+  const q = questions[current];
+  const isCorrect = idx === q.ans;
+  const letters = ['A','B','C','D'];
+  
+  document.querySelectorAll('.answer-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    else if (i === idx && !isCorrect) btn.classList.add('wrong');
+    else if (i !== q.ans) btn.classList.add('dimmed');
+  });
+  
+  sessionAnswers.push({ q: q.q, selected: idx, correct: q.ans, opts: q.opts, wasCorrect: isCorrect });
+  
+  if (isCorrect) {
+    score++;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    document.getElementById('hdr-score').textContent = score;
+    document.getElementById('hdr-streak').textContent = streak;
+    document.getElementById('result-feedback').innerHTML = 
+      `<div class="result-toast correct-toast">✓ CORRECT${streak > 1 ? `<span class="streak-badge">🔥 ${streak} STREAK</span>` : ''}</div>`;
+  } else {
+    streak = 0;
+    document.getElementById('hdr-streak').textContent = '0';
+    document.getElementById('result-feedback').innerHTML = 
+      `<div class="result-toast wrong-toast">✗ INCORRECT — correct: ${letters[q.ans]}</div>`;
+  }
+  
+  if (mode !== 'rapid') {
+    document.getElementById('explanation-box').innerHTML = 
+      `<div class="explanation"><strong>📖 Explanation:</strong> ${q.exp}</div>`;
+  }
+  
+  document.getElementById('quiz-actions').style.display = 'block';
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.innerHTML = current < questions.length - 1 ? 'NEXT <span>→</span>' : 'SEE RESULTS <span>→</span>';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResults(); return; }
+  renderQuestion();
+}
+
+function showResults() {
+  clearInterval(timer);
+  showScreen('results');
+  
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+  
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = score;
+  document.getElementById('res-wrong').textContent = total - score;
+  document.getElementById('res-streak').textContent = bestStreak;
+  
+  // Animated ring
+  setTimeout(() => {
+    const circumference = 471;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('score-circle').style.strokeDashoffset = offset;
+  }, 100);
+  
+  let verdict, sub, color;
+  if (pct >= 90) { verdict = '🏆 OUTSTANDING'; sub = 'You are exam-ready! Excellent performance across the board.'; }
+  else if (pct >= 80) { verdict = '✅ STRONG PASS'; sub = 'Well above the passing threshold. Keep drilling weak areas.'; }
+  else if (pct >= 70) { verdict = '📋 PASSING'; sub = 'CompTIA Security+ passing score is typically ~750/900. Keep studying!'; }
+  else if (pct >= 50) { verdict = '⚠️ NEEDS WORK'; sub = 'Review the lessons where you struggled and try again.'; }
+  else { verdict = '📚 KEEP STUDYING'; sub = 'Don\'t worry — review the material and try again. You\'ve got this!'; }
+  
+  document.getElementById('verdict').textContent = verdict;
+  document.getElementById('verdict-sub').textContent = sub;
+  document.getElementById('review-list').style.display = 'none';
+  document.getElementById('review-list').innerHTML = '';
+}
+
+function toggleReview() {
+  const list = document.getElementById('review-list');
+  if (list.style.display !== 'none') { list.style.display = 'none'; return; }
+  
+  const letters = ['A','B','C','D'];
+  list.innerHTML = sessionAnswers.map((a, i) => `
+    <div class="review-item ${a.wasCorrect ? 'ri-correct' : 'ri-wrong'}">
+      <div class="review-q">${i+1}. ${a.q}</div>
+      ${a.selected >= 0 ? `<div class="review-a ${a.wasCorrect ? 'ra-correct' : 'ra-wrong'}">
+        Your answer: ${letters[a.selected]}. ${a.opts[a.selected]}
+      </div>` : '<div class="review-a ra-wrong">⏰ Time expired</div>'}
+      ${!a.wasCorrect ? `<div class="review-correct-ans">
+        ✓ Correct: ${letters[a.correct]}. ${a.opts[a.correct]}
+      </div>` : ''}
+    </div>
+  `).join('');
+  
+  list.style.display = 'block';
+}
+
+function restartQuiz() {
+  document.getElementById('review-list').style.display = 'none';
+  startQuiz();
+}
+
+function goHome() {
+  clearInterval(timer);
+  showScreen('home');
+}
+
+// Init
+buildLessonGrid();
+</script>
+</body>
+</html>
